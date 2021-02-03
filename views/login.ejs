@@ -1,0 +1,26 @@
+<%- include('./partials/header');-%>
+<%- include('./partials/flash');-%>
+<p>New User?Please create an account by registering. &nbsp;<a class="btn btn-outline-success" name="buttons" href="/user/register" role="button">Register</a></p>
+<form action="/user/login" method="post">
+    <div class="form-group">
+      <label for="email">Email address</label>
+      <input type="email" class="form-control" name="email" id="email" placeholder="Enter email" autocomplete="off">
+      <label for="password">Password</label>
+      <div class="input-group mb-3">
+        <input type="password" class="form-control" name="password" id="password" placeholder="Password" autocomplete="off" >
+        <div class="input-group-append" >
+          <span class="input-group-text" id="password-show"><i id="password-eye" class="fa fa-eye-slash"></i></span>
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success">Login</button>
+</form>
+<br>
+<script>
+  document.getElementById("password-show").addEventListener('click',function(){
+ document.getElementById('password-eye').classList="fa fa-eye";
+ document.getElementById('password').type="text";
+},false);
+</script>
+  <%- include('./partials/footer');-%>
+  

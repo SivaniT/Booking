@@ -1,0 +1,28 @@
+<%- include('./partials/header');-%>
+<%- include('./partials/flash');-%>
+<form action="/user/register" method="post">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" autocomplete="off">
+      <label for="email">Email address</label>
+      <input type="email" class="form-control" name="email" id="email" placeholder="Enter email" autocomplete="off">
+      <label for="password">Password</label>
+      <div class="input-group mb-3">
+        <input type="password" class="form-control" name="password" id="password" placeholder="Password" autocomplete="off">
+        <div class="input-group-append" >
+          <span class="input-group-text" id="password-show"><i id="password-eye" class="fa fa-eye-slash"></i></span>
+        </div>
+      </div>
+      <label for="phone">Phone</label>
+      <input type="text" class="form-control" name="phone" id="phone" placeholder="Enter phone number" autocomplete="off">
+         </div>
+    <button type="submit" class="btn btn-success">Register</button>
+  </form>
+  <br>
+  <script>
+     document.getElementById("password-show").addEventListener('click',function(){
+    document.getElementById('password-eye').classList="fa fa-eye";
+    document.getElementById('password').type="text";
+  },false);
+  </script>
+  <%- include('./partials/footer');-%>

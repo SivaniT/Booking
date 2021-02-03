@@ -1,0 +1,77 @@
+<%- include('./partials/header');-%>
+<% for(i=0;i<doctor.length;i++){ %>
+  <div id="details<%= i %>">
+   <%= doctor[i].doctor_id['id'] %>
+   <%= doctor[i].doctor_id['name'] %>
+   <%= doctor[i].speciality %>
+   <%= doctor[i].experience %>
+   <%= doctor[i].gender %>
+   <%= doctor[i].qualification %>
+   <%= doctor[i].working_hours %>
+   <%= doctor[i].fees %>
+   <%= doctor[i].experience %>
+   <%= doctor[i].hospital_id.name %>
+   <%= doctor[i].hospital_id.location %>
+   <button  class="btn btn-success booking_btn" id="<%= i %>">Book</button>
+   <br><br><br>
+  </div>
+   <% } %>  
+<script>
+ let myCalendar;
+ let calendarSet=false;
+
+ var buttons= document.getElementsByClassName("booking_btn");
+ for(let i = 0; i <buttons.length; i++) {
+   buttons[i].addEventListener("click", function() {
+  if (calendarSet == true) {
+    $("#myCalendar").remove();
+  }
+   var booking_form=` <form action="/booking" method="post" class="book-appointment-form">
+    <div id="myCalendar" class="vanilla-calendar" value=""></div>
+    <div id="boxes"></div>
+    <button type="submit" class="btn btn-success">Confirm</button>
+    </form>`
+    document.getElementById("details"+i).insertAdjacentHTML( 'beforeend', booking_form);
+    createCalendar();
+    sendSelectedDate(i);
+   })
+ }
+
+ function createCalendar(){
+  calendarSet=true;
+ myCalendar = new VanillaCalendar({
+ selector: "#myCalendar",
+ pastDates: false,
+ availableWeekDays: [
+   {day: 'monday'},
+   {day: 'tuesday'},
+   {day: 'wednesday'},
+   {day: 'thursday'},
+   {day: 'friday'}
+ ], 
+ datesFilter: true
+});
+
+}
+ function sendSelectedDate(i){
+  let date_selected = document.getElementById("myCalendar");
+  document.getElementsByClassName("vanilla-calendar-body")[0].addEventListener("click", function(e) {
+   //wwe dont the default action to performed after submitting the form. we want to send an asnychoronous request to server 
+  e.preventDefault();
+  var t="<% doctor[i].doctor_id['id']; %>"
+  var d =new Date(date_selected.value).toLocaleDateString('ko-KR').slice(0, -1).replaceAll('. ','-');
+  axios.post('/time_slots', {app_date: d,doctor: t}).then(function (response) {
+    var $section = $('<div class="col-md-4"></div>');
+  (JSON.parse(response.data.slots)).forEach(function(slot) {
+    $section.append(`<button>${slot.time_slot}</button>`);
+  });
+  $('#boxes').html($section);
+    }).catch(function(e) {
+    console.log(e);
+    console.log("Please try again later.");
+  })
+})
+ }
+</script>
+ <script src="../js/booking_appointment.js"></script>
+<%- include('./partials/footer');-%>
