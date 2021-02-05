@@ -1,4 +1,26 @@
 <%- include('./partials/header');-%>
+<form action="/user/filter" method="post">
+  <label for="experience">Experience</label>
+  <select name="experience" id="experience">
+    <option value="elow">low to high</option>
+    <option value="ehigh">high to low</option>
+  </select>
+  <label for="gender">Gender</label>
+  <select name="gender" id="gender">
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+  </select>
+  <label for="doctor"></label>
+  <select name="doctor" id="doctor" required>
+    <option value="Cardialogist">Cardialogist</option>
+    <option value="Neurologist">Neurologist</option>
+    <option value="Pediatrician">Pediatrician</option>
+    <option value="Physician">Physician</option>
+    <option value="Surgeon">Surgeon</option>
+  </select>
+  <button type="submit" class="btn btn-success">Filter Data</button>
+</form>
+
 <% for(var i=0;i<doctor.length;i++){ %>
   <div id="details<%= i %>">
    <span class="doctor_id" ><%= doctor[i].id %></span>

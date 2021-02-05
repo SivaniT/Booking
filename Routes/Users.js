@@ -80,6 +80,23 @@ UserRouter.route("/userlogs").get(async function(req,res){
   res.render('userlogs', {users: patients[0], doctors: doctors[0]} );
 });
 
+UserRouter.route("/filter").post(async function(req,res){
+  console.log(req.body.gender+" "+req.body.doctor);
+  var e=req.body.experience;
+  if(e== "elow"){
+    Doctor.find({ gender: req.body.gender||"Male", speciality:req.body.doctor }).sort([["experience",1]]).populate('doctor_id','name id').populate('hospital_id').then((doctors,err)=>{
+      console.log(doctors);
+       res.render("book",{doctor:doctors});
+     }).catch(err=>   req.flash('error',"Something went wrong!Try again!"));
+  }
+  else{
+  Doctor.find({ gender: req.body.gender||"Male", speciality:req.body.doctor }).sort([["experience",-1]]).populate('doctor_id','name id').populate('hospital_id').then((doctors,err)=>{
+   console.log(doctors);
+    res.render("book",{doctor:doctors});
+  }).catch(err=>   req.flash('error',"Something went wrong!Try again!"));
+}
+})
+//60150df74632b63f8cac2ac7
 module.exports = UserRouter;
 
   
