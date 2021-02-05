@@ -5,7 +5,9 @@ const sanitizeHtml=require('sanitize-html');
 const nodemailer = require('nodemailer');
 const passport = require("passport");
 const User=require('../Models/User');
+const Doctor=require('../Models/Doctor');
 const auth=require('../Authentication/authenticate');
+const mail=require('../Mail');
 require('dotenv').config();
 
 const UserRouter = express.Router();
@@ -38,39 +40,11 @@ function sanitize(text){
       name: sanitize(req.body.name),
       email: sanitize(req.body.email),
       password: sanitize(hashedPassword),
-      phone: sanitize(req.body.phone),
-      role: sanitize(req.body.role)
+      phone: sanitize(req.body.phone)
     })
    await user.save(); 
-let transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-      user: process.env.EMAIL, 
-      pass: process.env.PASSWORD
+   mail(req,res,req.body.email,'Your username is '+req.body.name+' and your password is '+req.body.password+'. Have a nice day!',"Your account is created successfully!Password is sent to your mail",'/user/login',"Your account is created successfully!Could not send email!",'/user/register');  
   }
-});
-
-// Step 2
-let mailOptions = {
-  from: process.env.EMAIL, // TODO: email sender
-  to: req.body.email, // TODO: email receiver
-  subject: 'Thank you for registering',
-  text: 'Your username is '+req.body.name+' and your password is '+req.body.password+'. Have a nice day!'
-};
-
-// Step 3
-transporter.sendMail(mailOptions, (err, data) => {
-  if (err) {
-    req.flash('error',"Your account is created successfully!Could not send email!");
-    console.log(err);
-    res.redirect('/user/login');
-      }
-  else{
-  req.flash('success',"Your account is created successfully!Password is sent to your mail");
-  res.redirect('/user/login');
-  }
-});
-    }
     })}
     catch(err){
        req.flash('error',"WRONGGG!Try again!");
@@ -94,7 +68,18 @@ UserRouter.route("/logout").get(auth.checkAuthenticated,function(req,res){
      res.redirect('/');
 });
   
-UserRouter.route("/booking").get(auth.checkAuthenticated,function(req,res){
-  
+UserRouter.route("/userlogs").get(async function(req,res){
+  var doctors=[];
+  var patients=[];
+  await Doctor.find().then((doctors_list,err)=>{
+  doctors.push(doctors_list);
+  }).catch(err=> req.flash('error',"Something went wrong!Try again!"));
+  await User.find({ role:'patient'}).populate('doctor_id').then((users,err)=> {
+  patients.push(users);
+  })
+  res.render('userlogs', {users: patients[0], doctors: doctors[0]} );
 });
+
 module.exports = UserRouter;
+
+  

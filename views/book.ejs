@@ -1,17 +1,17 @@
 <%- include('./partials/header');-%>
-<% for(i=0;i<doctor.length;i++){ %>
+<% for(var i=0;i<doctor.length;i++){ %>
   <div id="details<%= i %>">
-   <%= doctor[i].doctor_id['id'] %>
+   <span class="doctor_id" ><%= doctor[i].id %></span>
    <%= doctor[i].doctor_id['name'] %>
    <%= doctor[i].speciality %>
    <%= doctor[i].experience %>
    <%= doctor[i].gender %>
    <%= doctor[i].qualification %>
-   <%= doctor[i].working_hours %>
+   <span class="doctor_working_hours" ><%= doctor[i].working_hours %></span>
    <%= doctor[i].fees %>
    <%= doctor[i].experience %>
    <%= doctor[i].hospital_id.name %>
-   <%= doctor[i].hospital_id.location %>
+   <%= doctor[i].hospital_id.location %> 
    <button  class="btn btn-success booking_btn" id="<%= i %>">Book</button>
    <br><br><br>
   </div>
@@ -19,12 +19,16 @@
 <script>
  let myCalendar;
  let calendarSet=false;
-
+ var ids=document.getElementsByClassName("doctor_id");
+ for (i = 0; i < ids.length; i++) {
+    ids[i].style.display = 'none';
+}
  var buttons= document.getElementsByClassName("booking_btn");
  for(let i = 0; i <buttons.length; i++) {
    buttons[i].addEventListener("click", function() {
   if (calendarSet == true) {
     $("#myCalendar").remove();
+    $("form").remove();
   }
    var booking_form=` <form action="/booking" method="post" class="book-appointment-form">
     <div id="myCalendar" class="vanilla-calendar" value=""></div>
@@ -55,16 +59,45 @@
 }
  function sendSelectedDate(i){
   let date_selected = document.getElementById("myCalendar");
+  var working_hours=document.getElementsByClassName("doctor_working_hours")[i].textContent.replace(/AM|PM/g,'');
+  console.log(working_hours);
+  var x = {
+    slotInterval: 30,
+    openTime: working_hours.slice(1,6),
+    closeTime: parseInt(working_hours.slice(8,10))+12+working_hours.slice(10,-1)
+  }
+let startTime = moment(x.openTime, "hh:mm");
+let endTime = moment(x.closeTime, "hh:mm");
   document.getElementsByClassName("vanilla-calendar-body")[0].addEventListener("click", function(e) {
    //wwe dont the default action to performed after submitting the form. we want to send an asnychoronous request to server 
   e.preventDefault();
-  var t="<% doctor[i].doctor_id['id']; %>"
   var d =new Date(date_selected.value).toLocaleDateString('ko-KR').slice(0, -1).replaceAll('. ','-');
-  axios.post('/time_slots', {app_date: d,doctor: t}).then(function (response) {
-    var $section = $('<div class="col-md-4"></div>');
-  (JSON.parse(response.data.slots)).forEach(function(slot) {
-    $section.append(`<button>${slot.time_slot}</button>`);
+  var d_id=document.getElementsByClassName("doctor_id")[i].textContent;
+  console.log(d_id);
+  axios.post('/time_slots', {app_date: d,doctor: d_id}).then(function (response) {
+    var $section = $('<div class="col-md-4 doctor_form"></div>');
+    console
+    if(JSON.parse(response.data.data).length == 0 ){
+      while (startTime < endTime) {
+      $section.append(` <input type="radio" name="selected_slot" value="${startTime.format("hh:mm")}" /><label>${startTime.format("hh:mm")}-${startTime.add(30,'m').format("hh:mm")}</label><br>`);
+      } 
+    }
+    else{
+  while (startTime < endTime) {
+  (JSON.parse(response.data.data)).forEach(function(slot) {
+    let slot_start=slot.time_slot.split("-")[0];
+    console.log((parseInt(moment(slot_start, "hh:mm").minutes()) )+" "+parseInt(moment(startTime, "hh:mm").minutes()));
+    if(((parseInt(moment(slot_start, "hh:mm").hours())+12 )== parseInt(moment(startTime, "hh:mm").hours())) && (parseInt(moment(slot_start, "hh:mm").minutes()))==parseInt(moment(startTime, "hh:mm").minutes())){
+      $section.append(` <label class="disabled"><button type="button" disabled>${slot.time_slot}</button></label>`);
+      startTime.add(x.slotInterval, 'minutes');
+    }
+    else{
+    $section.append(` <input type="radio" name="selected_slot" value="${startTime.format("hh:mm")}" /><label>${startTime.format("hh:mm")}-${startTime.add(30,'m').format("hh:mm")}</label><br>`);
+  }
   });
+  }
+}
+
   $('#boxes').html($section);
     }).catch(function(e) {
     console.log(e);

@@ -58,15 +58,14 @@ app.get("/booking",function(req,res){
   }).catch(err=>   req.flash('error',"Something went wrong!Try again!"));
 });  
 app.get("/doctors",function(req,res){
- 
+  
 })
 app.post("/time_slots",function(req,res){
- 
-  items=Appointment.find({doctor_id: mongoose.Types.ObjectId(req.body.doctor), appointment_date:new Date(req.body.app_date)}).then((slots,err)=>{
+  console.log(req.body.doctor+" "+new Date(req.body.app_date));
+  items=Appointment.find({doctor_id: req.body.doctor, appointment_date: {$eq:new Date(req.body.app_date)}}).then((slots,err)=>{
     let data=JSON.stringify(slots);
-    console.log("hi");
-    console.log(req.body.doctor+" "+req.body.app_date);
-   return res.json({slots: data})
+    //console.log("data "+data);
+   return res.json({data: data})
   }).catch(err=>   req.flash('error',"Something went wrong!Try again!"))
 });
 
@@ -79,7 +78,7 @@ app.get("/checking",auth.checkIsAdmin,function(req,res){
   console.log("admin logged in");
   res.render("home");
 })
-//var a=new Appointment({hospital_id:mongoose.Types.ObjectId('600d3c106c153f06743eddc1'),doctor_id:mongoose.Types.ObjectId('600d5c5b8508ae1c18114975'),user_id:mongoose.Types.ObjectId('600c57276784ec3b3488f2e6'),time_slot:"5:30-6:30",appointment_date:new Date("2021-2-18")})
+//var a=new Appointment({hospital_id:mongoose.Types.ObjectId('600d3c106c153f06743eddc1'),doctor_id:mongoose.Types.ObjectId('600d5c5b8508ae1c18114975'),user_id:mongoose.Types.ObjectId('600c58f0de29d424b8e2581e'),time_slot:"2:30-3:30",appointment_date:new Date("2021-2-18")})
 //a.save()
 app.listen(3000, function() {
   console.log("Server started on port 3000");
