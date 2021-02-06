@@ -2,16 +2,19 @@
 <form action="/user/filter" method="post">
   <label for="experience">Experience</label>
   <select name="experience" id="experience">
+    <option hidden disabled selected value> -- select an option -- </option>
     <option value="elow">low to high</option>
     <option value="ehigh">high to low</option>
   </select>
   <label for="gender">Gender</label>
   <select name="gender" id="gender">
+    <option hidden disabled selected value> -- select an option -- </option>
     <option value="Male">Male</option>
     <option value="Female">Female</option>
   </select>
   <label for="doctor"></label>
   <select name="doctor" id="doctor" required>
+    <option hidden disabled selected value> -- select an option -- </option>
     <option value="Cardialogist">Cardialogist</option>
     <option value="Neurologist">Neurologist</option>
     <option value="Pediatrician">Pediatrician</option>
@@ -53,7 +56,7 @@
     $("form").remove();
   }
    var booking_form=` <form action="/booking" method="post" class="book-appointment-form">
-    <div id="myCalendar" class="vanilla-calendar" value=""></div>
+    <div id="myCalendar" class="vanilla-calendar" value="checking" name="Appdate"></div>
     <div id="boxes"></div>
     <button type="submit" class="btn btn-success">Confirm</button>
     </form>`
@@ -95,10 +98,10 @@ let endTime = moment(x.closeTime, "hh:mm");
   e.preventDefault();
   var d =new Date(date_selected.value).toLocaleDateString('ko-KR').slice(0, -1).replaceAll('. ','-');
   var d_id=document.getElementsByClassName("doctor_id")[i].textContent;
-  console.log(d_id);
+  console.log(d);
   axios.post('/time_slots', {app_date: d,doctor: d_id}).then(function (response) {
     var $section = $('<div class="col-md-4 doctor_form"></div>');
-    console
+    console.log(JSON.parse(response.data.data));
     if(JSON.parse(response.data.data).length == 0 ){
       while (startTime < endTime) {
       $section.append(` <input type="radio" name="selected_slot" value="${startTime.format("hh:mm")}" /><label>${startTime.format("hh:mm")}-${startTime.add(30,'m').format("hh:mm")}</label><br>`);

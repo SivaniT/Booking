@@ -61,8 +61,8 @@ app.get("/doctors",function(req,res){
   
 })
 app.post("/time_slots",function(req,res){
-  console.log(req.body.doctor+" "+new Date(req.body.app_date));
-  items=Appointment.find({doctor_id: req.body.doctor, appointment_date: {$eq:new Date(req.body.app_date)}}).then((slots,err)=>{
+  console.log(req.body.doctor+" "+req.body.app_date);
+  items=Appointment.find({doctor_id: req.body.doctor, appointment_date: req.body.app_date}).then((slots,err)=>{
     let data=JSON.stringify(slots);
     //console.log("data "+data);
    return res.json({data: data})
@@ -70,8 +70,9 @@ app.post("/time_slots",function(req,res){
 });
 
 app.post("/booking",function(req,res){
-  console.log("hurray");
-  res.render("book");
+  console.log(req.body);
+  console.log(req.body.selected_slot);
+  res.render("home");
 }); 
 
 app.get("/checking",auth.checkIsAdmin,function(req,res){
