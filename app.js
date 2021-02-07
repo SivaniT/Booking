@@ -15,8 +15,8 @@ const Doctor=require('./Models/Doctor');
 const Appointment=require('./Models/Appointment');
 const app = express();
 app.set('view engine', 'ejs');
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 // Express Middleware for serving static files
 app.use(express.static(__dirname + '/public'));
 app.use(session({
@@ -70,7 +70,7 @@ app.post("/time_slots",function(req,res){
 });
 
 app.post("/booking",function(req,res){
-  console.log(req.body);
+  console.log("Body  "+req.body);
   console.log(req.body.selected_slot);
   res.render("home");
 }); 

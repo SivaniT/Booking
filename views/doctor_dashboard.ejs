@@ -1,1 +1,7 @@
 <p>Doctor Dashboard</p>
+<% data.forEach(function(d) { %>
+    <%= d.user_id.name %>
+    <%= d.appointment_date %>
+    <%= d.time_slot %>
+    <br>
+<% })%>

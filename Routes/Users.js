@@ -2,10 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt=require('bcrypt');
 const sanitizeHtml=require('sanitize-html');
-const nodemailer = require('nodemailer');
 const passport = require("passport");
 const User=require('../Models/User');
 const Doctor=require('../Models/Doctor');
+const Appointment=require('../Models/Appointment');
 const auth=require('../Authentication/authenticate');
 const mail=require('../Mail');
 require('dotenv').config();
@@ -67,19 +67,20 @@ UserRouter.route("/logout").get(auth.checkAuthenticated,function(req,res){
      res.clearCookie('session-id');
      res.redirect('/');
 });
-  
-UserRouter.route("/userlogs").get(async function(req,res){
-  var doctors=[];
-  var patients=[];
-  await Doctor.find().then((doctors_list,err)=>{
-  doctors.push(doctors_list);
-  }).catch(err=> req.flash('error',"Something went wrong!Try again!"));
-  await User.find({ role:'patient'}).populate('doctor_id').then((users,err)=> {
-  patients.push(users);
-  })
-  res.render('userlogs', {users: patients[0], doctors: doctors[0]} );
-});
 
+UserRouter.route("/dashboard").get(auth.checkAuthenticated,function(req,res){
+  Appointment.find({user_id: req.user.id}).populate({
+    path: 'doctor_id',
+    model: 'Doctor',
+    populate: {
+      path: 'doctor_id',
+      model: 'User'
+    }
+  }).populate('hospital_id').then((data,err)=>{
+    console.log("user data"+data);
+    res.render('patient_dashboard',{data: data});
+  })
+});
 UserRouter.route("/filter").post(async function(req,res){
   console.log(req.body.gender+" "+req.body.doctor);
   var e=req.body.experience;

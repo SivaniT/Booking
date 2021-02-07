@@ -1,0 +1,13 @@
+<p>Patient Dashboard</p>
+<% data.forEach(function(p) { %>
+    <%= p.doctor_id.doctor_id.name %>
+    <%= p.doctor_id.doctor_id.phone %>
+    <%= p.doctor_id.speciality %>
+    <%= p.doctor_id.working_hours %>
+    <%= p.doctor_id.fees %>
+    <%= p.hospital_id.name %>
+    <%= p.hospital_id.location %>
+    <%= p.appointment_date %>
+    <%= p.time_slot %>
+    <br>
+<% })%>

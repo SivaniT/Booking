@@ -56,9 +56,9 @@
     $("form").remove();
   }
    var booking_form=` <form action="/booking" method="post" class="book-appointment-form">
-    <div id="myCalendar" class="vanilla-calendar" value="checking" name="Appdate"></div>
+    <div id="myCalendar" class="vanilla-calendar" name="Appdate"></div>
     <div id="boxes"></div>
-    <button type="submit" class="btn btn-success">Confirm</button>
+    <button type="submit" class="btn btn-success submit_booking_btn">Confirm</button>
     </form>`
     document.getElementById("details"+i).insertAdjacentHTML( 'beforeend', booking_form);
     createCalendar();
@@ -82,6 +82,19 @@
 });
 
 }
+
+ var forms=document.getElementsByClassName('book-appointment-form');
+
+ for(i=0;i<forms.length;i++){
+   forms[i].addEventListener('submit',function(){
+    e.preventDefault();
+    axios.post('/booking', {
+    AppDate: document.getElementById("myCalendar").value
+  }).then(function (response) {console.log(response)}).catch(error => {
+    console.error(error)
+  })})
+ }
+
  function sendSelectedDate(i){
   let date_selected = document.getElementById("myCalendar");
   var working_hours=document.getElementsByClassName("doctor_working_hours")[i].textContent.replace(/AM|PM/g,'');
