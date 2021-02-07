@@ -88,11 +88,17 @@
  for(i=0;i<forms.length;i++){
    forms[i].addEventListener('submit',function(){
     e.preventDefault();
-    axios.post('/booking', {
-    AppDate: document.getElementById("myCalendar").value
-  }).then(function (response) {console.log(response)}).catch(error => {
-    console.error(error)
-  })})
+    fetch('/booking', {
+    method: 'POST',
+    headers: {
+   'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+    },
+    body: JSON.stringify({
+            name: "John",
+            email: document.getElementById("myCalendar").value
+    })
+   });
+    })
  }
 
  function sendSelectedDate(i){

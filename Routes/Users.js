@@ -77,7 +77,6 @@ UserRouter.route("/dashboard").get(auth.checkAuthenticated,function(req,res){
       model: 'User'
     }
   }).populate('hospital_id').then((data,err)=>{
-    console.log("user data"+data);
     res.render('patient_dashboard',{data: data});
   })
 });

@@ -57,9 +57,6 @@ app.get("/booking",function(req,res){
     res.render("book",{doctor:doctors});
   }).catch(err=>   req.flash('error',"Something went wrong!Try again!"));
 });  
-app.get("/doctors",function(req,res){
-  
-})
 app.post("/time_slots",function(req,res){
   console.log(req.body.doctor+" "+req.body.app_date);
   items=Appointment.find({doctor_id: req.body.doctor, appointment_date: req.body.app_date}).then((slots,err)=>{
@@ -70,15 +67,11 @@ app.post("/time_slots",function(req,res){
 });
 
 app.post("/booking",function(req,res){
-  console.log("Body  "+req.body);
+  console.log("Body  "+ req.body.name);
   console.log(req.body.selected_slot);
   res.render("home");
 }); 
 
-app.get("/checking",auth.checkIsAdmin,function(req,res){
-  console.log("admin logged in");
-  res.render("home");
-})
 //var a=new Appointment({hospital_id:mongoose.Types.ObjectId('600d3c106c153f06743eddc1'),doctor_id:mongoose.Types.ObjectId('600d5c5b8508ae1c18114975'),user_id:mongoose.Types.ObjectId('600c58f0de29d424b8e2581e'),time_slot:"2:30-3:30",appointment_date:new Date("2021-2-18")})
 //a.save()
 app.listen(3000, function() {

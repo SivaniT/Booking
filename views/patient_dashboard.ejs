@@ -1,3 +1,4 @@
+<%- include('./partials/header');-%>
 <p>Patient Dashboard</p>
 <% data.forEach(function(p) { %>
     <%= p.doctor_id.doctor_id.name %>
@@ -11,3 +12,4 @@
     <%= p.time_slot %>
     <br>
 <% })%>
+<%- include('./partials/footer');-%>
